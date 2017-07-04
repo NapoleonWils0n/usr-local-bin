@@ -1,0 +1,8 @@
+#!/bin/bash
+
+# rsync system backup to external usb drive
+#==========================================
+
+# backup system exclude docker devicemapper
+rsync --delete -aAXv --exclude={"/dev/*","/proc/*","/sys/*","/tmp/*","/run/*","/mnt/*","/media/*","/lost+found","/var/lib/docker/devicemapper/"} /* /mnt/usb
+
