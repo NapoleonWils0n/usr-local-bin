@@ -16,26 +16,27 @@ OLD_IFS=${IFS}; #ifs space seperator
 IFS=$'\t\n' #change ifs seperator from spaces to new line
 
 # luks container variables
-LOOP="/dev/loop0"
-LUKSCONTAINER="/home/djwilcox/documents/superfly.iso"
-LUKS=luks
-LUKSMAPPER="/dev/mapper/luks"
-MOUNTPOINT="/home/djwilcox/mnt"
+loop=$(losetup -f)
+lukscontainer="/home/djwilcox/Documents/superfly.iso"
+luks=luks
+luksmapper="/dev/mapper/luks"
+mountpoint="/home/djwilcox/mnt"
+rmloop=$(losetup -j $lukscontainer | awk '{print $1}' | sed s/://g)
 
 # select and case statement
 select opt in "${options[@]}"; do
 case $opt in
   mount)
         echo "Mounting luks container"
-        losetup $LOOP $LUKSCONTAINER
-        cryptsetup luksOpen $LOOP $LUKS
-        mount $LUKSMAPPER $MOUNTPOINT
+        losetup $loop $lukscontainer
+        cryptsetup luksOpen $loop $luks
+        mount $luksmapper $mountpoint
         break;;
   umount)
         echo "Unmounting luks container"
-        umount $MOUNTPOINT
-        cryptsetup luksClose $LUKS
-	losetup -d $LOOP
+        umount $mountpoint
+        cryptsetup luksClose $luks
+	losetup -d $rmloop
 	break;;
   quit) 
 	echo "Quitting"
